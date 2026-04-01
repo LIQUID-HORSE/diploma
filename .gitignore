@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+.env
+Project_Proposal.pdf
+AGENTS.md
+results/config_notebook.json

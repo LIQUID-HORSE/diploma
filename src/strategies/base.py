@@ -139,6 +139,18 @@ class BaseCryptoStrategy(Strategy):
         if self.use_vol_target:
             self._ann_vol = self.I(ann_vol_from_close, self.data.Close, self.vol_lookback, self.periods_per_year)
 
+    def I(self, func, *args, **kwargs):
+        def wrapped(*a, **k):
+            out = func(*a, **k)
+
+            # backtesting.py поддерживает multi-output индикаторы
+            if isinstance(out, (tuple, list)):
+                return tuple(np.asarray(x).copy() for x in out)
+
+            return np.asarray(out).copy()
+
+        return super().I(wrapped, *args, **kwargs)
+
     def _can_trade_now(self) -> bool:
         if self.start_date is None:
             return True
