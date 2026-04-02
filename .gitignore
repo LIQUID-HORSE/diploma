@@ -5,3 +5,5 @@ __pycache__/
 Project_Proposal.pdf
 AGENTS.md
 results/config_notebook.json
+data/raw/_zip_cache
+data-legacy/
