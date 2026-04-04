@@ -9,4 +9,4 @@ data/raw/_zip_cache
 data-legacy/
 example-agents.md
 overview.md
-results\runner_exp\_snapshots
+results/runner_exp/_snapshots/
