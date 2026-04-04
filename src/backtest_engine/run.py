@@ -43,6 +43,7 @@ def optimize_on_train(
     bt_cfg: BacktestConfig,
     obj_cfg: ObjectiveConfig,
     return_heatmap: bool,
+    periods_per_year: int = 365,
 ) -> Tuple[Any, Optional[pd.Series], Dict[str, Any], float]:
     """
     Optimize on train and return:
@@ -55,6 +56,7 @@ def optimize_on_train(
         min_trades=obj_cfg.min_trades,
         min_exposure=obj_cfg.min_exposure,
         penalty=obj_cfg.penalty,
+        periods_per_year=periods_per_year,
     )
 
     if return_heatmap:
@@ -114,11 +116,12 @@ def metrics_row_from_oos_returns(
     oos_ret: pd.Series,
     *,
     stats: Any,
+    periods_per_year: int = 365,
 ) -> Dict[str, Any]:
     """
     Compute OOS metrics from returns + extract a couple of backtesting.py fields.
     """
-    m = compute_metrics_from_returns(oos_ret)
+    m = compute_metrics_from_returns(oos_ret, periods_per_year=periods_per_year)
 
     try:
         n_trades = int(stats.get("# Trades", 0))

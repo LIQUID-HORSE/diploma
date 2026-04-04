@@ -29,6 +29,7 @@ def run_symbol_cost(
     registry: List[StrategySpec],
     bench: StrategySpec,
     cfg: ExperimentConfig,
+    periods_per_year: int = 365,
     logger=None,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, Optional[pd.DataFrame], pd.DataFrame]:
     """
@@ -63,7 +64,7 @@ def run_symbol_cost(
             bench_ret = extract_test_returns(bench_stats, test_start=fold.test_start, test_end=fold.test_end)
             bench_parts.append(bench_ret)
 
-            bm = compute_metrics_from_returns(bench_ret)
+            bm = compute_metrics_from_returns(bench_ret, periods_per_year=periods_per_year)
             bench_fold_rows.append(
                 {
                     "symbol": sym,
@@ -100,6 +101,7 @@ def run_symbol_cost(
                     bt_cfg=cfg.bt,
                     obj_cfg=cfg.objective,
                     save_heatmap=bool(cfg.artifacts.save_heatmaps and spec.save_heatmap),
+                    periods_per_year=periods_per_year,
                 )
                 folds_rows.append(row)
                 per_strat_parts[spec.strategy_id].append(oos_ret)
@@ -160,6 +162,7 @@ def run_full_experiment(
     folds_by_symbol: Dict[str, List[WFFold]],
     registry: List[StrategySpec],
     bench: StrategySpec,
+    periods_per_year: int = 365,
     report_mod=None,
     logger=None,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, Optional[pd.DataFrame], pd.DataFrame]:
@@ -198,6 +201,7 @@ def run_full_experiment(
                 registry=registry,
                 bench=bench,
                 cfg=cfg,
+                periods_per_year=periods_per_year,
                 logger=logger,
             )
             folds_best_list.append(fb)

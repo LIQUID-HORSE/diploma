@@ -65,6 +65,7 @@ def stitched_metrics_for_subset_costs(
     bench_long: pd.DataFrame,
     bench_id: str = "BENCH:BuyHold",
     min_bars: int = 50,
+    periods_per_year: int = 365,
 ) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
 
@@ -72,7 +73,12 @@ def stitched_metrics_for_subset_costs(
         bench = get_stitched_series(bench_long, symbol=symbol, cost=cost, strategy_id=bench_id)
         if len(bench) >= min_bars:
             rows.append(
-                {"symbol": symbol, "cost": cost, "strategy_id": bench_id, **compute_metrics_from_returns(bench)}
+                {
+                    "symbol": symbol,
+                    "cost": cost,
+                    "strategy_id": bench_id,
+                    **compute_metrics_from_returns(bench, periods_per_year=periods_per_year),
+                }
             )
 
         for sid in strategies:
@@ -80,7 +86,12 @@ def stitched_metrics_for_subset_costs(
             if len(r) < min_bars:
                 continue
             rows.append(
-                {"symbol": symbol, "cost": cost, "strategy_id": sid, **compute_metrics_from_returns(r)}
+                {
+                    "symbol": symbol,
+                    "cost": cost,
+                    "strategy_id": sid,
+                    **compute_metrics_from_returns(r, periods_per_year=periods_per_year),
+                }
             )
 
     out = pd.DataFrame(rows)
@@ -148,6 +159,7 @@ def cost_sensitivity_top_calmar(
     costs_all: list[str] | None = None,
     bench_id: str = "BENCH:BuyHold",
     min_bars: int = 50,
+    periods_per_year: int = 365,
     out_name: str = "robust_cost_sensitivity_top_calmar.parquet",
 ) -> pd.DataFrame:
     costs_all = costs_all or ["Low", "Base", "High"]
@@ -172,6 +184,7 @@ def cost_sensitivity_top_calmar(
             bench_long=bench_oos_all,
             bench_id=bench_id,
             min_bars=min_bars,
+            periods_per_year=periods_per_year,
         )
         t["selection_rule"] = f"Top{topN}_by_Calmar_on_Base"
         sens_tables.append(t)
@@ -197,6 +210,7 @@ def cost_sensitivity_top_utility(
     costs_all: list[str] | None = None,
     bench_id: str = "BENCH:BuyHold",
     min_bars: int = 50,
+    periods_per_year: int = 365,
     out_name: str = "robust_cost_sensitivity_top_utility.parquet",
 ) -> pd.DataFrame:
     costs_all = costs_all or ["Low", "Base", "High"]
@@ -238,6 +252,7 @@ def cost_sensitivity_top_utility(
             bench_long=bench_oos_all,
             bench_id=bench_id,
             min_bars=min_bars,
+            periods_per_year=periods_per_year,
         )
         t["selection_rule"] = f"Top{topN}_by_UtilityExcessWorsenDD_lam{lam_star}_on_Base"
         t["lam"] = float(lam_star)
@@ -258,11 +273,12 @@ def metrics_on_slice(
     start: str,
     end: str,
     min_bars: int = 50,
+    periods_per_year: int = 365,
 ) -> dict[str, Any] | None:
     rs = r.loc[(r.index >= pd.Timestamp(start)) & (r.index < pd.Timestamp(end))]
     if len(rs) < min_bars:
         return None
-    return compute_metrics_from_returns(rs)
+    return compute_metrics_from_returns(rs, periods_per_year=periods_per_year)
 
 
 def subperiods_top_calmar(
@@ -276,6 +292,7 @@ def subperiods_top_calmar(
     topK: int = 3,
     bench_id: str = "BENCH:BuyHold",
     min_bars: int = 50,
+    periods_per_year: int = 365,
     out_name: str = "robust_subperiods_top_calmar.parquet",
 ) -> pd.DataFrame:
     returns_oos_all = ensure_date_col(returns_oos_all)
@@ -302,7 +319,13 @@ def subperiods_top_calmar(
             if r.empty:
                 continue
             for label, (start, end) in subperiods.items():
-                m = metrics_on_slice(r, start=start, end=end, min_bars=min_bars)
+                m = metrics_on_slice(
+                    r,
+                    start=start,
+                    end=end,
+                    min_bars=min_bars,
+                    periods_per_year=periods_per_year,
+                )
                 if m is None:
                     continue
                 rows.append({"symbol": sym, "cost": "Base", "strategy_id": sid, "subperiod": label, **m})
@@ -328,6 +351,7 @@ def subperiods_top_utility(
     topK: int = 3,
     bench_id: str = "BENCH:BuyHold",
     min_bars: int = 50,
+    periods_per_year: int = 365,
     out_name: str = "robust_subperiods_top_utility.parquet",
 ) -> pd.DataFrame:
     returns_oos_all = ensure_date_col(returns_oos_all)
@@ -370,7 +394,13 @@ def subperiods_top_utility(
             if r.empty:
                 continue
             for label, (start, end) in subperiods.items():
-                m = metrics_on_slice(r, start=start, end=end, min_bars=min_bars)
+                m = metrics_on_slice(
+                    r,
+                    start=start,
+                    end=end,
+                    min_bars=min_bars,
+                    periods_per_year=periods_per_year,
+                )
                 if m is None:
                     continue
                 rows.append(

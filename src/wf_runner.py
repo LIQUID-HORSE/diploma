@@ -29,6 +29,7 @@ def run_one_fold(
     bt_cfg: BacktestConfig,
     obj_cfg: ObjectiveConfig,
     save_heatmap: bool,
+    periods_per_year: int = 365,
 ) -> Tuple[Dict[str, Any], pd.Series, Optional[pd.DataFrame]]:
     """
     Run exactly one (symbol, fold, strategy, cost) unit:
@@ -53,6 +54,7 @@ def run_one_fold(
             bt_cfg=bt_cfg,
             obj_cfg=obj_cfg,
             return_heatmap=bool(save_heatmap),
+            periods_per_year=periods_per_year,
         )
         if heatmap is not None:
             hm = heatmap.rename("objective").reset_index()
@@ -91,6 +93,6 @@ def run_one_fold(
         "params": json.dumps(best_params, default=str),
         "train_objective": float(train_obj),
     }
-    row.update(metrics_row_from_oos_returns(oos_ret, stats=test_stats))
+    row.update(metrics_row_from_oos_returns(oos_ret, stats=test_stats, periods_per_year=periods_per_year))
 
     return row, oos_ret, heatmap_df

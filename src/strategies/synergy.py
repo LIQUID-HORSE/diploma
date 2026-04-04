@@ -55,14 +55,15 @@ class MAFilterRSI(BaseCryptoStrategy):
 
 
 class MA200FilterBollinger(BaseCryptoStrategy):
-    """S2: Close > SMA(200) filter + Bollinger MR trigger."""
+    """S2: Close > SMA(M) filter + Bollinger MR trigger."""
 
+    M: int = 200
     n: int = 20
     k: float = 2.0
 
     def init(self):
         super().init()
-        self._ma200 = self.I(sma, self.data.Close, 200)
+        self._ma_filter = self.I(sma, self.data.Close, self.M)
         self._mid = self.I(boll_mid, self.data.Close, self.n)
         self._low = self.I(boll_lower, self.data.Close, self.n, self.k)
 
@@ -73,7 +74,7 @@ class MA200FilterBollinger(BaseCryptoStrategy):
 
         c = float(self.data.Close[-1])
         if not self.position:
-            if c > float(self._ma200[-1]) and c < float(self._low[-1]):
+            if c > float(self._ma_filter[-1]) and c < float(self._low[-1]):
                 self._buy_full_or_scaled()
         else:
             if c > float(self._mid[-1]):

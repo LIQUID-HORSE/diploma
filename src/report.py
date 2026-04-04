@@ -114,7 +114,7 @@ def leaderboard_by_strategy(folds_best: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
-def stitched_metrics(returns_oos: pd.DataFrame) -> pd.DataFrame:
+def stitched_metrics(returns_oos: pd.DataFrame, *, periods_per_year: int = 365) -> pd.DataFrame:
     """Compute metrics for stitched OOS return series for each strategy."""
     df = _ensure_date_column(returns_oos)
     if "date" not in df.columns:
@@ -125,7 +125,7 @@ def stitched_metrics(returns_oos: pd.DataFrame) -> pd.DataFrame:
     rows = []
     for (sym, cost, sid), g in df.groupby(["symbol", "cost", "strategy_id"], dropna=False):
         r = g.set_index("date")["ret"].astype(float)
-        m = compute_metrics_from_returns(r)
+        m = compute_metrics_from_returns(r, periods_per_year=periods_per_year)
         rows.append({"symbol": sym, "cost": cost, "strategy_id": sid, **m})
     out = pd.DataFrame(rows)
     if not out.empty and "Calmar" in out.columns:
@@ -263,7 +263,7 @@ def plot_heatmap(
     plt.close(fig)
 
 
-def generate_all_reports(out_dir: Path, figures_dir: Optional[Path] = None) -> None:
+def generate_all_reports(out_dir: Path, figures_dir: Optional[Path] = None, *, periods_per_year: int = 365) -> None:
     """Convenience wrapper: build leaderboards and common figures."""
     folds, rets, bench, heatmaps = load_results(out_dir)
     figures_dir = figures_dir or (out_dir / "figures")
@@ -283,7 +283,7 @@ def generate_all_reports(out_dir: Path, figures_dir: Optional[Path] = None) -> N
     except Exception:
         lb.to_csv(results_dir / "leaderboard.csv", index=False)
 
-    stitched = stitched_metrics(rets)
+    stitched = stitched_metrics(rets, periods_per_year=periods_per_year)
     try:
         stitched.to_parquet(results_dir / "stitched_metrics.parquet", index=False)
     except Exception:

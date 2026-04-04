@@ -198,6 +198,7 @@ def objective_calmar_with_sanity_penalties(
     min_trades: int = 10,
     min_exposure: float = 0.10,
     penalty: float = 1e6,
+    periods_per_year: int = DEFAULT_PERIODS_PER_YEAR,
 ) -> float:
     """Objective for train optimization.
 
@@ -216,7 +217,11 @@ def objective_calmar_with_sanity_penalties(
         # backtesting.py versions differ in key naming; try a few
         cal = _get_stat(stats, "Calmar") or _get_stat(stats, "Calmar ratio")
     try:
-        calmar = float(cal) if cal is not None else calmar_ratio(daily_returns_from_backtesting_stats(stats))
+        calmar = (
+            float(cal)
+            if cal is not None
+            else calmar_ratio(daily_returns_from_backtesting_stats(stats), periods_per_year=periods_per_year)
+        )
     except Exception:
         calmar = -np.inf
 

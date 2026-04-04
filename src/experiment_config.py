@@ -11,8 +11,24 @@ class WFConfig:
     train_years: int = 3
     test_months: int = 6
     step_months: int = 6
-    warmup_bars: int = 252
+    warmup_bars: int = 300
     require_full_warmup: bool = True
+
+
+def warmup_bars_for_timeframe(timeframe: str) -> int:
+    tf = timeframe.strip().lower()
+    mapping = {"1d": 300, "4h": 1800}
+    if tf not in mapping:
+        raise ValueError(f"Unsupported timeframe={timeframe!r}. Expected one of: {sorted(mapping)}")
+    return mapping[tf]
+
+
+def periods_per_year_for_timeframe(timeframe: str) -> int:
+    tf = timeframe.strip().lower()
+    mapping = {"1d": 365, "4h": 365 * 6}
+    if tf not in mapping:
+        raise ValueError(f"Unsupported timeframe={timeframe!r}. Expected one of: {sorted(mapping)}")
+    return mapping[tf]
 
 
 @dataclass(frozen=True)
