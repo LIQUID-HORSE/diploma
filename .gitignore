@@ -10,3 +10,5 @@ data-legacy/
 example-agents.md
 overview.md
 results/runner_exp/_snapshots/
+data/tmp.ipynb
+onchain.md
