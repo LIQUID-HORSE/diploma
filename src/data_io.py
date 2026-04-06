@@ -59,7 +59,15 @@ def load_binance_spot_1d_csv(path: Path, *, project_root: Path, logger=None) -> 
     if "Volume" not in df.columns:
         df["Volume"] = 0.0
 
-    out = df[["Open", "High", "Low", "Close", "Volume"]].astype(float).copy()
+    ohlcv_cols = ["Open", "High", "Low", "Close", "Volume"]
+    out = df[ohlcv_cols].astype(float).copy()
+
+    # Keep additional numeric columns (for example on-chain features) after OHLCV.
+    # This is backward compatible: for pure OHLCV CSVs, extras is empty.
+    extra_cols = [c for c in df.columns if c not in ohlcv_cols]
+    if extra_cols:
+        extra = df[extra_cols].apply(pd.to_numeric, errors="coerce")
+        out = pd.concat([out, extra], axis=1)
 
     # backtesting.py prefers timezone-naive index
     out.index = out.index.tz_convert(None)

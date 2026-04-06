@@ -46,6 +46,18 @@ def build_registry(
         MACrossTSMOMConfirm,
         SimpleEnsemble,
     )
+    from src.strategies.onchain import (
+        RSIMeanReversionOnchain,
+        BollingerMeanReversionOnchain,
+        ZScoreMeanReversionOnchain,
+        MAFilterRSIOnchain,
+        MA200FilterBollingerOnchain,
+    )
+
+    def _valid_addr_pair(p: Any) -> bool:
+        # Keep exactly 3 combinations from onchain.md:
+        # (14,60), (14,90), (30,90)
+        return (int(p.addr_short), int(p.addr_long)) in {(14, 60), (14, 90), (30, 90)}
     if tf == "1d":
         return [
             StrategySpec(
@@ -136,6 +148,76 @@ def build_registry(
                 cls=SimpleEnsemble,
                 param_grid={"ma_pair": [(20, 200), (50, 200)], "N": [50, 200], "L": [120, 252]},
                 group="synergy",
+            ),
+            StrategySpec(
+                code="R1OC",
+                name="RSI_MR_Onchain",
+                cls=RSIMeanReversionOnchain,
+                param_grid={
+                    "n": [7, 14, 21],
+                    "low": [20, 30, 40],
+                    "exit": [45, 50, 55],
+                    "addr_short": [14, 30],
+                    "addr_long": [60, 90],
+                    "mvrv_cap": [2.0, 2.5, 3.0, 3.5],
+                },
+                constraint=_valid_addr_pair,
+                group="onchain",
+            ),
+            StrategySpec(
+                code="R2OC",
+                name="Bollinger_MR_Onchain",
+                cls=BollingerMeanReversionOnchain,
+                param_grid={
+                    "n": [20, 50, 100],
+                    "k": [1.5, 2.0, 2.5],
+                    "exit_mode": ["midline", "fixed"],
+                    "addr_short": [14, 30],
+                    "addr_long": [60, 90],
+                    "mvrv_cap": [2.0, 2.5, 3.0, 3.5],
+                },
+                constraint=_valid_addr_pair,
+                group="onchain",
+            ),
+            StrategySpec(
+                code="R3OC",
+                name="ZScore_MR_Onchain",
+                cls=ZScoreMeanReversionOnchain,
+                param_grid={
+                    "n": [20, 50, 200],
+                    "entry_z": [1.5, 2.0, 2.5],
+                    "exit_z": [0.0, 0.5, 1.0],
+                    "addr_short": [14, 30],
+                    "addr_long": [60, 90],
+                    "mvrv_cap": [2.0, 2.5, 3.0, 3.5],
+                },
+                constraint=_valid_addr_pair,
+                group="onchain",
+            ),
+            StrategySpec(
+                code="S1OC",
+                name="MAFilter_RSI_MR_Onchain",
+                cls=MAFilterRSIOnchain,
+                param_grid={
+                    "M": [100, 200],
+                    "n": [14, 21],
+                    "low": [30, 40],
+                    "exit": [50, 55],
+                    "mvrv_cap": [2.0, 2.5, 3.0, 3.5],
+                },
+                group="onchain",
+            ),
+            StrategySpec(
+                code="S2OC",
+                name="MA200Filter_Bollinger_MR_Onchain",
+                cls=MA200FilterBollingerOnchain,
+                param_grid={
+                    "M": [200, 600, 1200],
+                    "n": [20, 50],
+                    "k": [2.0, 2.5],
+                    "mvrv_cap": [2.0, 2.5, 3.0, 3.5],
+                },
+                group="onchain",
             ),
         ]
 

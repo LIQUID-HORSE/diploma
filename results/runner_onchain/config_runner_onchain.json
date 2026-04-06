@@ -1,0 +1,55 @@
+{
+  "data_paths": {
+    "BTCUSDT": "c:\\Users\\prosh\\OneDrive\\\u0420\u0430\u0431\u043e\u0447\u0438\u0439 \u0441\u0442\u043e\u043b\\git\\diploma\\data\\merged_onchain_1d\\btc-1d-merged.csv",
+    "ETHUSDT": "c:\\Users\\prosh\\OneDrive\\\u0420\u0430\u0431\u043e\u0447\u0438\u0439 \u0441\u0442\u043e\u043b\\git\\diploma\\data\\merged_onchain_1d\\eth-1d-merged.csv",
+    "XRPUSDT": "c:\\Users\\prosh\\OneDrive\\\u0420\u0430\u0431\u043e\u0447\u0438\u0439 \u0441\u0442\u043e\u043b\\git\\diploma\\data\\merged_onchain_1d\\xrp-1d-merged.csv",
+    "DOGEUSDT": "c:\\Users\\prosh\\OneDrive\\\u0420\u0430\u0431\u043e\u0447\u0438\u0439 \u0441\u0442\u043e\u043b\\git\\diploma\\data\\merged_onchain_1d\\doge-1d-merged.csv"
+  },
+  "out_dir": "c:\\Users\\prosh\\OneDrive\\\u0420\u0430\u0431\u043e\u0447\u0438\u0439 \u0441\u0442\u043e\u043b\\git\\diploma",
+  "results_dir": "c:\\Users\\prosh\\OneDrive\\\u0420\u0430\u0431\u043e\u0447\u0438\u0439 \u0441\u0442\u043e\u043b\\git\\diploma\\results\\runner_onchain",
+  "figures_dir": "c:\\Users\\prosh\\OneDrive\\\u0420\u0430\u0431\u043e\u0447\u0438\u0439 \u0441\u0442\u043e\u043b\\git\\diploma\\figures\\runner_onchain",
+  "wf": {
+    "train_years": 3,
+    "test_months": 6,
+    "step_months": 6,
+    "warmup_bars": 300,
+    "require_full_warmup": true
+  },
+  "bt": {
+    "cash": 2000000.0,
+    "trade_on_close": false,
+    "exclusive_orders": true,
+    "hedging": false,
+    "margin": 1.0,
+    "max_rel_size": 0.999,
+    "finalize_trades": true
+  },
+  "costs": [
+    "Low",
+    "Base",
+    "High"
+  ],
+  "objective": {
+    "min_trades": 10,
+    "min_exposure": 0.1,
+    "penalty": 1000000.0
+  },
+  "rc_spa": {
+    "block_size": 10,
+    "reps": 2000,
+    "seed": 42,
+    "studentize": true
+  },
+  "artifacts": {
+    "save_heatmaps": true,
+    "fail_fast": true,
+    "use_cache_if_exists": false
+  },
+  "debug": {
+    "enabled": false,
+    "only_strategies": [
+      "T1:SMA_Crossover",
+      "BENCH:BuyHold"
+    ]
+  }
+}
