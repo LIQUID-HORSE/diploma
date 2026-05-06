@@ -1,0 +1,41 @@
+{
+  "created_at_utc": "2026-04-27T11:50:08.188711+00:00",
+  "project_root": "c:\\Users\\prosh\\OneDrive\\Рабочий стол\\git\\diploma",
+  "out_dir": "c:\\Users\\prosh\\OneDrive\\Рабочий стол\\git\\diploma\\results\\random_timing",
+  "params": {
+    "k": 1000,
+    "lambdas": [
+      0.5,
+      1.0,
+      2.0
+    ],
+    "seed": 42,
+    "chunk_size": 200,
+    "cost_model": "entry=commission+spread, exit=commission",
+    "entry_bps_by_cost": {
+      "Low": 8.5,
+      "Base": 12.000000000000002,
+      "High": 20.0
+    },
+    "exit_bps_by_cost": {
+      "Low": 7.5,
+      "Base": 10.0,
+      "High": 15.0
+    },
+    "roundtrip_bps_by_cost": {
+      "Low": 16.0,
+      "Base": 22.0,
+      "High": 35.0
+    }
+  },
+  "coverage": {
+    "positions_rows": 2301366,
+    "returns_rows": 2301366,
+    "bench_rows": 209400,
+    "groups": 420,
+    "tests_total": 1260,
+    "tests_skipped": 0,
+    "results_rows": 1260,
+    "summary_rows": 30
+  }
+}
