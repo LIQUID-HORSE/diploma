@@ -5,9 +5,9 @@ __pycache__/
 Project_Proposal.pdf
 AGENTS.md
 results/config_notebook.json
+results/*.parquet
 data/raw/_zip_cache
 data-legacy/
-example-agents.md
 overview.md
 results/runner_exp/_snapshots/
 data/tmp.ipynb
@@ -19,3 +19,11 @@ data.md
 params.md
 pos.ipynb
 random_timing_plan.md
+coursework.tex
+rev.md
+coursework_2.tex
+coursework_3.tex
+overview.ipynb
+runner.ipynb
+run_wf.py
+figures/*.png
