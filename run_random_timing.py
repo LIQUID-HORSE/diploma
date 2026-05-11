@@ -107,7 +107,7 @@ def main() -> int:
         raise ValueError("--chunk-size must be positive.")
 
     project_root = _resolve_project_root()
-    out_dir = project_root / "results" / "random_timing"
+    out_dir = project_root / "results" / "random_timing-test"
     out_dir.mkdir(parents=True, exist_ok=True)
 
     logger.info("PROJECT_ROOT=%s", project_root)

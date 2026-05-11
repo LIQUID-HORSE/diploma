@@ -89,7 +89,8 @@ def compute_utility_series(ret: np.ndarray | pd.Series, lam: float) -> np.ndarra
 
     equity = np.cumprod(1.0 + r)
     peak = np.maximum.accumulate(equity)
-    dd = (peak / np.maximum(equity, 1e-16)) - 1.0
+    dd = 1.0 - (equity / np.maximum(peak, 1e-16))
+    # dd = (peak / np.maximum(equity, 1e-16)) - 1.0
     delta_dd = np.diff(dd, prepend=0.0)
     penalty = np.maximum(0.0, delta_dd)
     return r - float(lam) * penalty
@@ -103,7 +104,8 @@ def _utility_mean_from_returns_matrix(ret_mx: np.ndarray, lam: float) -> np.ndar
 
     equity = np.cumprod(1.0 + ret_mx, axis=1)
     peak = np.maximum.accumulate(equity, axis=1)
-    dd = (peak / np.maximum(equity, 1e-16)) - 1.0
+    dd = 1.0 - (equity / np.maximum(peak, 1e-16))
+    # dd = (peak / np.maximum(equity, 1e-16)) - 1.0
     delta_dd = np.diff(dd, axis=1, prepend=np.zeros((dd.shape[0], 1), dtype=float))
     penalty = np.maximum(0.0, delta_dd)
     utility = ret_mx - float(lam) * penalty
